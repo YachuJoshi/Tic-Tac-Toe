@@ -15,7 +15,7 @@ def user_choice():
 
     while choice.isdigit() == False or within_range == False:
 
-        choice = input("Enter a number from (1-9): ")
+        choice = input(f"Enter a number from (1-9): ")
 
         if choice.isdigit():
             if int(choice) in range(1, 10):
@@ -113,9 +113,9 @@ def full_board_check(board):
 
 
 def reset():
-    '''
+    """
     RESETS AND RETURNS GAME VARIABLES
-    '''
+    """
     is_game_active = True
     active_player = randint(0, 1)
     print(f'{list(players.values())[active_player]["name"]} goes first')
@@ -135,16 +135,18 @@ has_won = False
 players = {"first": {"name": "", "marker": ""}, "second": {"name": "", "marker": ""}}
 
 while is_game_active:
-    players["first"]["name"] = input("Player-1, Enter your name: ")
-    players["second"]["name"] = input("Player-2, Enter your name: ")
+    players["first"]["name"] = input("Player-1, Enter your name: ").capitalize()
+    players["second"]["name"] = input("Player-2, Enter your name: ").capitalize()
 
     players["first"]["marker"], players["second"]["marker"] = player_marker()
 
     print(f'{list(players.values())[active_player]["name"]} goes first')
+    print_board(my_board)
 
     while not has_won:
         winner = False
         full_board = full_board_check(my_board)
+        current_player_name = list(players.values())[active_player]["name"]
 
         if not full_board:
             choice = user_choice()
@@ -158,7 +160,6 @@ while is_game_active:
                     place_marker(my_board, choice, players["second"]["marker"])
 
                 print_board(my_board)
-                active_player = not active_player
 
             else:
                 print("That slot is already taken")
@@ -166,19 +167,30 @@ while is_game_active:
             has_won = check_win_condition(my_board)
 
             if has_won:
-                winner = not active_player
+                winner = active_player
                 print(
-                    f"{list(players.values())[not active_player]['name']} has won the game"
+                    f"{list(players.values())[active_player]['name']} has won the game"
                 )
 
                 if gameon_choice():
                     (is_game_active, active_player, has_won, my_board) = reset()
                 else:
+                    print('Thanks for playing!')
                     is_game_active = False
 
+            active_player = not active_player
         # If board is full, ask for a new game
 
         else:
             print("It's a tie! ")
             if gameon_choice():
-                (is_game_active, active_player, has_won, my_board) = reset()
+                (
+                    is_game_active,
+                    active_player,
+                    has_won,
+                    my_board,
+                ) = reset()
+            else:
+                print('Thanks for playing!')
+                is_game_active = False
+                break
